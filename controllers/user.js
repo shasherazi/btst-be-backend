@@ -32,6 +32,17 @@ export const getUserById = async (req, res) => {
 export const createUser = async (req, res) => {
   const { username, email, password } = req.body;
   try {
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: "Missing data" });
+    }
+
+    if (
+      User.findUnique({ where: { email } }) ||
+      User.findUnique({ where: { username } })
+    ) {
+      return res.status(400).json({ error: "User already exists" });
+    }
+
     const user = await User.create({
       data: {
         username,
